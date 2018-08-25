@@ -1,2 +1,2 @@
 # MandelBrot-Set_Tkinter
-Work for a previous school project. 
+Was orginally for a school project. I am now looking to expand it.
