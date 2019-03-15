@@ -1,6 +1,5 @@
 """
 By: Jared Lincenberg
-
 Mandelbrot Set 
 Create Project: 2017
 Computer Science 101 - D
@@ -14,6 +13,10 @@ import time
 import datetime
 from tkinter import simpledialog, Listbox
 import tkinter as tk
+import pycuda.autoinit
+import pycuda.driver as drv
+from pycuda.compiler import SourceModule
+import time
 
 class Window(Frame):
 
@@ -118,18 +121,20 @@ class Window(Frame):
 
 
 	def clickRun(self, width=500,height=500):
-		try:
-			f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
-		except Exception as e:
-			pass
-		self.f=ImageTk.PhotoImage(f)
-		#self.canvasImage.delete("all")
-		if self.hasTrace:
-			self.image_on_canvas = self.canvasImage.create_image(0, 0, image = self.f)
-			self.canvasImage.itemconfig(self.image_on_canvas, image = self.f)
-		else:
-			self.image_on_canvas = self.canvasImage.create_image( 250, 250, image = self.f)
-			self.canvasImage.itemconfig(self.image_on_canvas, image = self.f)
+		for i in range(120):
+			try:
+				f=mandelbrotSet(float(self.xmin.get()) * (1 - .01 * i), float(self.ymin.get()) * (1 - .01 * i), float(self.xmax.get()) * (1 - .01 * i),float(self.ymax.get()) * (1 - .01 * i), width, height,int(self.iTmax.get()))
+			except Exception as e:
+				pass
+			self.f=ImageTk.PhotoImage(f)
+			#self.canvasImage.delete("all")
+			if self.hasTrace:
+				self.image_on_canvas = self.canvasImage.create_image(0, 0, image = self.f)
+				self.canvasImage.itemconfig(self.image_on_canvas, image = self.f)
+			else:
+				self.image_on_canvas = self.canvasImage.create_image( 250, 250, image = self.f)
+				self.canvasImage.itemconfig(self.image_on_canvas, image = self.f)
+			Tk.update(self)
 		
 			
 
@@ -248,8 +253,9 @@ class Load(Frame):
 def mandelbrotPath(z,c):
 	z=z**2+c
 	return z
-@jit
+
 def mandelbrotIt(c,maxIt):
+	#print(c)
 	z = c
 	for n in range(maxIt):
 		if abs(z)>2:
@@ -257,18 +263,88 @@ def mandelbrotIt(c,maxIt):
 		z=z**2+c
 	return maxIt
 
-@jit
+
 def mandelbrotSet(xmin,ymin,xmax,ymax,width,height,maxIt):
-	rows=np.linspace(xmin,xmax, width)
-	col=np.linspace(ymin,ymax, height)
-	img=np.empty((width,height))
-	for i in range(width):
-		for j in range(height):
-			img[i,j]=(mandelbrotIt(rows[j]+1j*col[width-i],maxIt)+1)
-	#print(img)
+	
+	h=np.int32(height)
+	w=np.int32(width)
+	m=np.int32(maxIt)
+
+	rows=np.linspace(xmin,xmax, width).astype(np.float32)
+	cols=np.linspace(ymin,ymax, height).astype(np.float32)
+	img=np.full((width,height),500, dtype=np.float32)
+	img_gpu = drv.mem_alloc(img.nbytes)
+	img = img.flatten()
+	drv.memcpy_htod(img_gpu, img)
+
+	mod = SourceModule("""
+	#include <math.h>
+
+	struct inum {
+			float r;
+			float i;
+	};
+
+	__device__ float inum_abs (inum a) {
+		return sqrt(a.r*a.r + a.i*a.i);
+	}
+
+
+	__device__ inum inum_sqr(inum a) {
+		inum retval;
+		retval.r = a.r*a.r - a.i*a.i;
+		retval.i = 2 * a.r * a.i;
+		return retval;
+	}
+
+
+	__device__ inum inum_add(inum a, inum b) {
+		inum retval;
+		retval.r = a.r + b.r;
+		retval.i = a.i + b.i;
+		return retval;
+	}
+
+
+	__global__ void make_image(float* img, float* rows, float* cols, int width, int hight, int maxIt)
+	{
+		int col = blockIdx.x * blockDim.x + threadIdx.x;
+		int row = blockIdx.y * blockDim.y + threadIdx.y;
+		int threadId = row * width + col;
+		if (!(row < hight && col < width)) {
+			return;
+		}
+		inum c;
+		img[threadId] = threadId;
+		c.r = rows[col];
+		c.i = cols[width - row];
+		inum z;
+		z.r = c.r;
+		z.i = c.i;
+		int iterations = maxIt;
+		for(int n = 0; n < maxIt; n++) {
+			if(inum_abs(z) > 2) {
+				iterations = n;
+				break;
+			}
+			z = inum_add(inum_sqr(z), c);
+		}
+		img[threadId] = iterations;
+	}
+	""")
+	make_image = mod.get_function("make_image")
+	
+	make_image(
+        img_gpu, drv.In(rows), drv.In(cols), w, h, m,
+    	block=(8,16,1), grid=(63,32))
+	drv.memcpy_dtoh(img, img_gpu)
+	img = np.reshape(img, (width, height))
+
+
 	test=Image.fromarray(img)
 	#return(ImageTk.PhotoImage(test))
 	return(test)
+	
 
 root = Tk()
 root.geometry("800x600")
