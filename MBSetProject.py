@@ -14,6 +14,7 @@ import time
 import datetime
 from tkinter import simpledialog, Listbox
 import tkinter as tk
+import math
 
 class Window(Frame):
 
@@ -119,8 +120,12 @@ class Window(Frame):
 
 	def clickRun(self, width=500,height=500):
 		try:
+			print("HELLO")
 			f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
+			print("HELLO")
 		except Exception as e:
+			print("NO")
+			print(e)
 			pass
 		self.f=ImageTk.PhotoImage(f)
 		#self.canvasImage.delete("all")
@@ -167,7 +172,7 @@ class Window(Frame):
 		print(i)
 
 	def clickSaveImage(self, width=2000,height=2000):
-		f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,float(self.iTmax.get()))
+		f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
 		f=f.convert("RGB")
 		f.save("MandelbrotSet_{}_{}_{}_{}_{}-".format(self.xmin.get(),self.ymin.get(),self.xmax.get(),self.ymax.get(),self.iTmax.get())
 			+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')+".png","PNG")
@@ -250,7 +255,7 @@ def mandelbrotPath(z,c):
 	return z
 @jit
 def mandelbrotIt(c,maxIt):
-	z = c
+	z=c
 	for n in range(maxIt):
 		if abs(z)>2:
 			return n		
@@ -261,14 +266,22 @@ def mandelbrotIt(c,maxIt):
 def mandelbrotSet(xmin,ymin,xmax,ymax,width,height,maxIt):
 	rows=np.linspace(xmin,xmax, width)
 	col=np.linspace(ymin,ymax, height)
-	img=np.empty((width,height))
+	img=Image.new('HSV',(width,height),"black")
+	pixels = img.load()
+	range(width-1)
 	for i in range(width):
 		for j in range(height):
-			img[i,j]=(mandelbrotIt(rows[j]+1j*col[width-i],maxIt)+1)
+			it=mandelbrotIt(rows[i]+1j*col[j],maxIt)
+			if it==maxIt:
+				pixels[i,j]=(0,0,0)
+			else:
+				pixels[i,j]=(math.floor(it*6+180)%360,255,255)
+
 	#print(img)
-	test=Image.fromarray(img)
+	#test=Image.fromarray(img)
 	#return(ImageTk.PhotoImage(test))
-	return(test)
+	#img.show()
+	return(img)
 
 root = Tk()
 root.geometry("800x600")
