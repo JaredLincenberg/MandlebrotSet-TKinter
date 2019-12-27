@@ -143,6 +143,7 @@ class Window(Frame):
 		edit = Menu(menu)
 		edit.add_command(label = 'Show Image', command = self.showImg)
 		menu.add_cascade(label = 'Edit', menu = edit)
+		
 	def showImg(self):
 		f=mandelbrotSet(-2,-1.5,1,1.5,250,250,1000)
 		label = Label(image = f)
@@ -215,21 +216,21 @@ class Window(Frame):
 		print(i)
 
 	def clickSaveImage(self, width=2000,height=2000):
-		f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
-		f=f.convert("RGB")
+		f = mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
+		f = f.convert("RGB")
 		f.save("MandelbrotSet_{}_{}_{}_{}_{}-".format(self.xmin.get(),self.ymin.get(),self.xmax.get(),self.ymax.get(),self.iTmax.get())
-			+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')+".png","PNG")
+			+ datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')+".png","PNG")
 		print("MandelbrotSet_{}_{}_{}_{}_{}".format(self.xmin.get(),self.ymin.get(),self.xmax.get(),self.ymax.get(),self.iTmax.get())
-			+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')+".png")
+			+ datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M')+".png")
 
 	def clickSavePar(self):
 		file= open('Parameters.txt','a')
-		file.write("{},{},{},{},{}\n".format(self.xmin.get(),self.ymin.get(),self.xmax.get(),self.ymax.get(),self.iTmax.get()))
+		file.write("{},{},{},{},{}\n".format(self.xmin.get(), self.ymin.get(), self.xmax.get(), self.ymax.get(), self.iTmax.get()))
 		# print(self.xmin.get(),self.ymin.get(),self.xmax.get(),self.ymax.get(),self.iTmax.get())
 
 	def clickSavePoint(self):
 		file= open('Points.txt','a')
-		file.write("{},{}\n".format(self.cRpoint.get(),self.cIpoint.get()))
+		file.write("{},{}\n".format(self.cRpoint.get(), self.cIpoint.get()))
 		# print(self.cRpoint.get(),self.cIpoint.get())
 
 	def loadInfo(self):
@@ -294,16 +295,16 @@ class Load(Frame):
 		self.master.destroy()
 
 def mandelbrotPath(z,c):
-	z=z**2+c
+	z = z**2 + c
 	return z
 
 @jit
 def mandelbrotIt(c,maxIt):
-	z=c
+	z = c
 	for n in range(maxIt):
 		if abs(z)>2:
 			return n		
-		z=z**2+c
+		z = z**2 + c
 	return maxIt
 
 @jit
@@ -318,11 +319,11 @@ def mandelbrotSet(xmin,ymin,xmax,ymax,width,height,maxIt):
 	# range(width-1)
 	for i in range(width):
 		for j in range(height):
-			it=mandelbrotIt(rows[i] + 1j*col[j],maxIt)
-			if it==maxIt:
-				pixels[i,j]=(0,0,0)
+			it = mandelbrotIt(rows[i] + 1j*col[j],maxIt)
+			if it == maxIt:
+				pixels[i,j] = (0,0,0)
 			else:
-				pixels[i,j]=(math.floor(it*6+180)%360, 255, 255)
+				pixels[i,j] = (math.floor(it*6+180)%360, 255, 255)
 
 	#print(img)
 	#test=Image.fromarray(img)
