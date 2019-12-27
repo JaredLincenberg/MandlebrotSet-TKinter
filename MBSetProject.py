@@ -46,99 +46,125 @@ class Window(Frame):
 		optionsFrame.pack(side=LEFT)
 		
 
-		self.xmin=StringVar(self, value='-2')
-		self.xmax=StringVar(self, value='1')
-		self.ymin=StringVar(self, value='-1.5')
-		self.ymax=StringVar(self, value='1.5')
-		self.iTmax=StringVar(self, value='1000')
-		self.cRpoint=StringVar(self,value=-0.5)
-		self.cIpoint=StringVar(self, value=-0.5)
+		# Default values for the dimensions of the Mandelbort Set
+		self.xmin = StringVar(self, value='-2')
+		self.xmax = StringVar(self, value='1')
+		self.ymin = StringVar(self, value='-1.5')
+		self.ymax = StringVar(self, value='1.5')
 
-		xminLb=Label(optionsFrame,text="Smallest X")
-		xmaxLb=Label(optionsFrame,text="Largest X")
-		xminEn=Entry(optionsFrame,textvariable=self.xmin)
-		xmaxEn=Entry(optionsFrame,textvariable=self.xmax)
-		yminLb=Label(optionsFrame,text="Smallest Y")
-		ymaxLb=Label(optionsFrame,text="Largest Y")
-		yminEn=Entry(optionsFrame,textvariable=self.ymin)
-		ymaxEn=Entry(optionsFrame,textvariable=self.ymax)
-		iTmaxLb=Label(optionsFrame,text="Max Iteration")
-		iTmaxEn=Entry(optionsFrame,textvariable=self.iTmax)
-		cRpointLb=Label(optionsFrame,text="Real part")
-		cRpointEn=Entry(optionsFrame,textvariable=self.cRpoint)
-		cIpointLb=Label(optionsFrame,text="Imaginary part")
-		cIpointEn=Entry(optionsFrame,textvariable=self.cIpoint)
+		# Default values for the iterations
+		self.iTmax = StringVar(self, value='1000')
+
+		# Default start point for the 
+		self.cRpoint = StringVar(self, value = -0.5)
+		self.cIpoint = StringVar(self, value = -0.5)
+
+		xminLb = Label(optionsFrame, text = "Smallest X")
+		xmaxLb = Label(optionsFrame, text = "Largest X")
+
+		xminEn = Entry(optionsFrame, textvariable = self.xmin)
+		xmaxEn = Entry(optionsFrame, textvariable = self.xmax)
+
+		yminLb = Label(optionsFrame, text = "Smallest Y")
+		ymaxLb = Label(optionsFrame, text = "Largest Y")
+
+		yminEn = Entry(optionsFrame, textvariable = self.ymin)
+		ymaxEn = Entry(optionsFrame, textvariable = self.ymax)
+
+		iTmaxLb = Label(optionsFrame, text = "Max Iteration")
+		iTmaxEn = Entry(optionsFrame, textvariable = self.iTmax)
+
+		cRpointLb = Label(optionsFrame, text = "Real part")
+		cRpointEn = Entry(optionsFrame, textvariable = self.cRpoint)
+
+		cIpointLb = Label(optionsFrame, text = "Imaginary part")
+		cIpointEn = Entry(optionsFrame, textvariable = self.cIpoint)
 
 		#Lay Out
-		xminLb.grid(row=0, column=0)
-		xminEn.grid(row=0, column=1)
-		xmaxLb.grid(row=1, column=0)
-		xmaxEn.grid(row=1, column=1)
-		yminLb.grid(row=2, column=0)
-		yminEn.grid(row=2, column=1)
-		ymaxLb.grid(row=3, column=0)
-		ymaxEn.grid(row=3, column=1)
-		iTmaxLb.grid(row=4, column=0)
-		iTmaxEn.grid(row=4, column=1)
+		xminLb.grid(row = 0, column = 0)
+		xminEn.grid(row = 0, column = 1)
+		xmaxLb.grid(row = 1, column = 0)
+		xmaxEn.grid(row = 1, column = 1)
+		yminLb.grid(row = 2, column = 0)
+		yminEn.grid(row = 2, column = 1)
+		ymaxLb.grid(row = 3, column = 0)
+		ymaxEn.grid(row = 3, column = 1)
+		iTmaxLb.grid(row = 4, column = 0)
+		iTmaxEn.grid(row = 4, column = 1)
 		
-		cRpointLb.grid(row=6,column=0)
-		cRpointEn.grid(row=6,column=1)
-		cIpointLb.grid(row=7,column=0)
-		cIpointEn.grid(row=7,column=1)
-		canvasFrame= LabelFrame(root)
-		canvasFrame.pack(side=RIGHT)
+		cRpointLb.grid(row = 6,column = 0)
+		cRpointEn.grid(row = 6,column = 1)
+		cIpointLb.grid(row = 7,column = 0)
+		cIpointEn.grid(row = 7,column = 1)
+
+		canvasFrame = LabelFrame(root)
+		canvasFrame.pack(side = RIGHT)
 		
 		#Canvas and Function Buttons
-		self.canvasImage=Canvas(canvasFrame,width=500,height=500,bg="black")
-		self.canvasImage.grid(columnspan=3, sticky=NW)
-		RunButton = Button(canvasFrame, text="Run",command=self.clickRun)
-		RunButton.grid(row=1, column=0)
+		self.canvasImage=Canvas(canvasFrame, width = 500, height = 500, bg = "black")
+		self.canvasImage.grid(columnspan = 3, sticky = NW)
+		RunButton = Button(canvasFrame, text = "Run",
+			command = self.clickRun)
+		RunButton.grid(row = 1, column = 0)
+
 		#Saves 2000x2000 image with parameters and time stamp
-		SaveButtonImage = Button(canvasFrame, text="Save Image",command=lambda: self.clickSaveImage())
+		SaveButtonImage = Button(canvasFrame, text = "Save Image", 
+			command = lambda: self.clickSaveImage())
 		SaveButtonImage.grid(row=1,column=1)
+
 		#Saves x and y bounds and max iterations
-		SaveButtonPar = Button(canvasFrame, text="Save Parameters",command=lambda: self.clickSavePar())
-		SaveButtonPar.grid(row=1,column=2)
+		SaveButtonPar = Button(canvasFrame, text = "Save Parameters", 
+			command = lambda: self.clickSavePar())
+		SaveButtonPar.grid(row = 1, column = 2)
+
 		#Creates canvas uses turtle to draw path of a point through the iterations of the Mandlebrot set
-		self.hasTrace=False
-		TraceButton = Button(canvasFrame, text="Trace", command=lambda: self.clickTrace())
-		TraceButton.grid(row=2,column=0)
+		self.hasTrace = False
+		TraceButton = Button(canvasFrame, text = "Trace", 
+			command = lambda: self.clickTrace())
+		TraceButton.grid(row = 2, column = 0)
+
 		#Save the point that is input to be traced
-		SaveButtonPoint = Button(canvasFrame, text="Save Points",
-			command=lambda: self.clickSavePoint())
+		SaveButtonPoint = Button(canvasFrame, text = "Save Points",
+			command = lambda: self.clickSavePoint())
 		SaveButtonPoint.grid(row=2,column=1)
+
 		#Load both saved parameters and point updates input, does not run
-		LoadButton = Button(canvasFrame, text="Load", command= self.loadInfo)
-		LoadButton.grid(row=2, column=2)
+		LoadButton = Button(canvasFrame, text = "Load", command= self.loadInfo)
+		LoadButton.grid(row = 2, column = 2)
 
 		#Old code for Menu bar
 		menu = Menu(self.master)
-		self.master.config(menu=menu)
+		self.master.config(menu = menu)
 
 		file = Menu(menu)
-		file.add_command(label='Exit',command=self.quit)
-		menu.add_cascade(label='File', menu=file)
+		file.add_command(label = 'Exit', command = self.quit)
+		menu.add_cascade(label = 'File', menu = file)
 
 		edit = Menu(menu)
-		edit.add_command(label='Show Image', command=self.showImg)
-		menu.add_cascade(label='Edit',menu=edit)
+		edit.add_command(label = 'Show Image', command = self.showImg)
+		menu.add_cascade(label = 'Edit', menu = edit)
 	def showImg(self):
 		f=mandelbrotSet(-2,-1.5,1,1.5,250,250,1000)
-		label = Label(image=f)
+		label = Label(image = f)
 		label.image = f # keep a reference!
 		label.pack()
 
 
-	def clickRun(self, width=500,height=500):
+	def clickRun(self, width = 500,height = 500):
 		try:
 			print("HELLO")
-			f=mandelbrotSet(float(self.xmin.get()),float(self.ymin.get()),float(self.xmax.get()),float(self.ymax.get()),width,height,int(self.iTmax.get()))
+			f = mandelbrotSet(float(self.xmin.get()), 
+				float(self.ymin.get()), 
+				float(self.xmax.get()), 
+				float(self.ymax.get()), 
+				width, height, 
+				int(self.iTmax.get()))
 			print("HELLO")
 		except Exception as e:
 			print("NO")
 			print(e)
 			pass
-		self.f=ImageTk.PhotoImage(f)
+		self.f = ImageTk.PhotoImage(f)
 		#self.canvasImage.delete("all")
 		if self.hasTrace:
 			self.image_on_canvas = self.canvasImage.create_image(0, 0, image = self.f)
@@ -149,28 +175,33 @@ class Window(Frame):
 		
 			
 
-	def clickTrace(self, width=500,height=500):
-		s=TurtleScreen(self.canvasImage)
-		self.hasTrace=True
+	def clickTrace(self, width = 500, height = 500):
+		s = TurtleScreen(self.canvasImage)
+		self.hasTrace = True
 		#rows=np.linspace(xmin,xmax, width)
 		#col=np.linspace(ymin,ymax, height)
 		
-		mandelbrotSet(-1.5,-1.5,1.5,1.5,500,500,1000).convert("RGB").save("temp.gif","GIF")
+		mandelbrotSet(-1.5, -1.5, 1.5, 1.5, 500, 500, 1000).convert("RGB").save("temp.gif","GIF")
 		s.bgpic("temp.gif")
+
 		t=RawTurtle(s)
 		t.color("red")
 		#t.goto(250,0)
-		z=0+0*1j
-		c=float(self.cRpoint.get())+float(self.cIpoint.get())*1j
+		z = 0 + 0*1j
+		c = float(self.cRpoint.get()) + float(self.cIpoint.get())*1j
 		#xspan=int(xmax.get())-int(xmin.get())
+
+		# Turtle Setup
 		t.penup()
-		t.goto(int((500/3)*c.real),int((500/3)*c.imag))
+		t.goto(int((500/3)*c.real), int((500/3)*c.imag))
 		t.pendown()
 		t.color("blue")
 		t.begin_fill()
 		t.circle(3)
 		t.end_fill()
 		t.color("red")
+
+		# Turtle Draw Path
 		for i in range(int(self.iTmax.get())):
 			if abs(z)>4:
 				break
@@ -178,8 +209,9 @@ class Window(Frame):
 			if abs(z-p)<0.01:
 				break
 			z=p
-			t.goto(int((500/3)*p.real),int((500/3)*p.imag))
+			t.goto(int((500/3)*p.real), int((500/3)*p.imag))
 			# print(int((500/3)*p.real),int((500/3)*p.imag))
+
 		print(i)
 
 	def clickSaveImage(self, width=2000,height=2000):
@@ -228,8 +260,8 @@ class Load(Frame):
 		self.frame.pack(fill=BOTH, expand=1)
 		filePar = open('Parameters.txt','r')
 		filePoi = open('Points.txt', 'r')
-		lb= Listbox(self.frame)
-		label= Label(self.frame,text="Load Parameters and Points")
+		lb = Listbox(self.frame)
+		label = Label(self.frame,text="Load Parameters and Points")
 		label.pack()
 
 		for l in filePar.readlines():
@@ -264,6 +296,7 @@ class Load(Frame):
 def mandelbrotPath(z,c):
 	z=z**2+c
 	return z
+
 @jit
 def mandelbrotIt(c,maxIt):
 	z=c
@@ -277,16 +310,19 @@ def mandelbrotIt(c,maxIt):
 def mandelbrotSet(xmin,ymin,xmax,ymax,width,height,maxIt):
 	rows=np.linspace(xmin,xmax, width)
 	col=np.linspace(ymin,ymax, height)
+
 	img=Image.new('HSV',(width,height),"black")
+
 	pixels = img.load()
-	range(width-1)
+
+	# range(width-1)
 	for i in range(width):
 		for j in range(height):
-			it=mandelbrotIt(rows[i]+1j*col[j],maxIt)
+			it=mandelbrotIt(rows[i] + 1j*col[j],maxIt)
 			if it==maxIt:
 				pixels[i,j]=(0,0,0)
 			else:
-				pixels[i,j]=(math.floor(it*6+180)%360,255,255)
+				pixels[i,j]=(math.floor(it*6+180)%360, 255, 255)
 
 	#print(img)
 	#test=Image.fromarray(img)
