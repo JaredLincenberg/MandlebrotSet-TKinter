@@ -5,16 +5,27 @@ Mandelbrot Set
 Create Project: 2017
 Computer Science 101 - D
 """
+
+
+# GUI
 from tkinter import *
+from tkinter import simpledialog, Listbox
+import tkinter as tk
+
 from PIL import Image, ImageTk    
 from numba import jit
 import numpy as np
+
+# Display of point transformation
 from turtle import *
+
 import time
 import datetime
-from tkinter import simpledialog, Listbox
-import tkinter as tk
 import math
+
+# My Classes 
+# import MBSet
+# import JuliaSet
 
 class Window(Frame):
 
